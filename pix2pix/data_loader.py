@@ -1,7 +1,8 @@
-import scipy
 from glob import glob
 import numpy as np
 import matplotlib.pyplot as plt
+import imageio
+from skimage.transform import resize
 
 class DataLoader():
     def __init__(self, dataset_name, img_res=(128, 128)):
@@ -23,8 +24,8 @@ class DataLoader():
             _w = int(w/2)
             img_A, img_B = img[:, :_w, :], img[:, _w:, :]
 
-            img_A = scipy.misc.imresize(img_A, self.img_res)
-            img_B = scipy.misc.imresize(img_B, self.img_res)
+            img_A = resize(img_A, self.img_res)
+            img_B = resize(img_B, self.img_res)
 
             # If training => do random flip
             if not is_testing and np.random.random() < 0.5:
@@ -55,8 +56,8 @@ class DataLoader():
                 img_A = img[:, :half_w, :]
                 img_B = img[:, half_w:, :]
 
-                img_A = scipy.misc.imresize(img_A, self.img_res)
-                img_B = scipy.misc.imresize(img_B, self.img_res)
+                img_A = resize(img_A, self.img_res)
+                img_B = resize(img_B, self.img_res)
 
                 if not is_testing and np.random.random() > 0.5:
                         img_A = np.fliplr(img_A)
@@ -72,4 +73,4 @@ class DataLoader():
 
 
     def imread(self, path):
-        return scipy.misc.imread(path, mode='RGB').astype(np.float)
+        return np.array(imageio.imread(path), dtype=np.float)
